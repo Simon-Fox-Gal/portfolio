@@ -7,7 +7,7 @@ let panel,audio,title,record,art,status,opener;
 export function initPlayer(mount){
  if(mounted)return;mounted=true;mountPage=mount;
  panel=document.createElement('section');panel.id='sample-player';panel.hidden=true;panel.setAttribute('aria-label','Recording sample player');
- panel.innerHTML=`<img class="player-cover" alt="" width="64" height="64"><div class="player-description"><p class="player-kicker">MP3 sample · one minute · not full recording quality</p><p id="sample-title"></p><a id="sample-recording"></a></div><div class="player-controls"><audio controls preload="none" aria-label="Sample playback"></audio><div class="player-actions"><button type="button" data-player-next>Next sample →</button><button type="button" data-player-random>Choose something for me</button><button type="button" data-player-close aria-label="Close sample player">Close ×</button></div><p class="player-status" role="status"></p></div>`;
+ panel.innerHTML=`<img class="player-cover" alt="" width="64" height="64"><div class="player-description"><p class="player-kicker">MP3 sample · one minute · not full recording quality</p><p id="sample-title"></p><a id="sample-recording"></a></div><div class="player-controls"><audio controls preload="none" aria-label="Sample playback"></audio><div class="player-actions"><button type="button" data-player-next>Next sample →</button><button type="button" data-player-random>Choose something to listen to</button><button type="button" data-player-close aria-label="Close sample player">Close ×</button></div><p class="player-status" role="status"></p></div>`;
  document.body.append(panel);audio=panel.querySelector('audio');title=panel.querySelector('#sample-title');record=panel.querySelector('#sample-recording');art=panel.querySelector('img');status=panel.querySelector('[role=status]');
  new ResizeObserver(()=>document.documentElement.style.setProperty('--player-height',panel.hidden?'0px':panel.getBoundingClientRect().height+'px')).observe(panel);
  panel.querySelector('[data-player-next]').addEventListener('click',next);
@@ -26,7 +26,7 @@ export function initPlayer(mount){
  addEventListener('popstate',ev=>{if(!enabled)return;if(document.querySelector('#catalogue')&&ev.state?.catalogue)return;if(document.querySelector('#record-room')&&location.pathname===base+'/recordings/archive/')return;ev.stopImmediatePropagation();navigate(location.href,false)},true);
  load().catch(()=>{});
 }
-async function load(){if(items.length)return;loading??=fetch(base+'/assets/samples-index.json?v=45cdfd28ef').then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{items=data;queue=items.map(x=>x.id);let saved;try{saved=JSON.parse(sessionStorage.getItem(sessionKey))}catch{}albumDeck=createSessionDeck(items.map(x=>x.albumId),saved);saveDeck()}).catch(e=>{loading=null;throw e});await loading}
+async function load(){if(items.length)return;loading??=fetch(base+'/assets/samples-index.json?v=e908546a77').then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{items=data;queue=items.map(x=>x.id);let saved;try{saved=JSON.parse(sessionStorage.getItem(sessionKey))}catch{}albumDeck=createSessionDeck(items.map(x=>x.albumId),saved);saveDeck()}).catch(e=>{loading=null;throw e});await loading}
 function markCurrent(){document.querySelectorAll('[data-play-sample]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.playSample===current?.id)))}
 async function select(id,automatic=false){
  const item=items.find(x=>x.id===id);if(!item)return;
