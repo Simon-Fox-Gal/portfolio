@@ -1,9 +1,9 @@
-import{prepare,matches as albumMatches}from'./search.mjs?v=e593d57080';
-import{artistPalette}from'./artist-palette.mjs?v=e593d57080';
+import{prepare,matches as albumMatches}from'./search.mjs?v=7fe52102d3';
+import{artistPalette}from'./artist-palette.mjs?v=7fe52102d3';
 
 export async function startRecordRoom(signal){
  const room=document.querySelector('#record-room'),base=document.body.dataset.base||'';
- const response=await fetch(base+'/assets/catalogue-index.json?v=e593d57080');if(!response.ok)return;
+ const response=await fetch(base+'/assets/catalogue-index.json?v=7fe52102d3');if(!response.ok)return;
  const data=(await response.json()).map(prepare);if(signal?.aborted)return;const byId=new Map(data.map(a=>[a.id,a]));
  const sleeves=[...room.querySelectorAll('[data-record]')],query=room.querySelector('#room-query'),status=room.querySelector('#room-status');
  const next=room.querySelector('#room-next'),clear=room.querySelector('#room-clear');
@@ -18,10 +18,10 @@ export async function startRecordRoom(signal){
   for(const el of sleeves){const album=byId.get(el.dataset.record),hit=albumMatches(album,{q:term,filters});el.classList.toggle('dimmed',!hit);el.classList.toggle('illuminated',filtered&&hit);if(hit)matches.push(el);
    const url=new URL(el.href);url.searchParams.set('from',address());el.href=url.pathname+url.search;
   }
-  status.textContent=filtered?`${matches.length} of ${sleeves.length} recordings selected`:`All ${sleeves.length} recordings`;
+  status.textContent=filtered?`${matches.length} matching recording${matches.length===1?'':'s'} in this selection`:`${sleeves.length} recordings currently featured`;
   if(filtered&&!matches.length)status.textContent='No matches. Choose another name or clear the selection.';
   next.hidden=!filtered||!matches.length;clear.hidden=!filtered;
-  room.querySelector('#room-artist-label').textContent=filtered?[...Object.values(filters).flat(),`${matches.length} recordings`].join(' · '):'';
+  room.querySelector('#room-artist-label').textContent=filtered?[...Object.values(filters).flat(),`${matches.length} recording${matches.length===1?'':'s'}`].join(' · '):'';
   room.querySelector('#room-caption').textContent='Select a cover for recording details.';room.querySelector('#room-credit').textContent='';
   for(const [key,sync]of Object.entries(syncPalettes))sync(filters[key]);
   const catalogueView=document.querySelector('.collection-views a');if(catalogueView){const p=new URLSearchParams;for(const [key,names]of Object.entries(filters))for(const name of names)p.append(key,name);if(term)p.set('q',term);catalogueView.href=base+'/recordings/'+(p.size?'?'+p:'')}
