@@ -58,3 +58,6 @@ html:not(.js) [data-play-sample],html:not(.js) [data-random-sample]{display:none
 /* Homepage roles and an uncropped photograph at the start of the session essay. */
 .hero h1{font-size:clamp(2.3rem,4.3vw,4.6rem)}.session-photo{margin:0 0 2rem}.session-photo img{width:100%;height:auto;display:block}
 @media(max-width:767px){.hero h1{font-size:clamp(2.1rem,8.3vw,3.5rem)}.session-photo{margin-bottom:1.6rem}}
+
+/* A small factual caption separates the session photograph from the essay. */
+.session-photo{margin-bottom:2.5rem}.session-photo figcaption{margin-top:9px;font:.72rem/1.55 var(--sans);color:var(--muted)}

@@ -1,8 +1,8 @@
-import{initPlayer,navigate}from'./audio-player.mjs?v=e908546a77';
-import{startRecordRoom}from'./record-room.mjs?v=e908546a77';
-import{artistPalette}from'./artist-palette.mjs?v=e908546a77';
-import{categories,normalise,equivalent,prepare,values,matches,results,fromURL,toParams,distance,queryMatch}from'./search.mjs?v=e908546a77';
-import{dailyChoice,randomChoice}from'./discovery.mjs?v=e908546a77';
+import{initPlayer,navigate}from'./audio-player.mjs?v=e593d57080';
+import{startRecordRoom}from'./record-room.mjs?v=e593d57080';
+import{artistPalette}from'./artist-palette.mjs?v=e593d57080';
+import{categories,normalise,equivalent,prepare,values,matches,results,fromURL,toParams,distance,queryMatch}from'./search.mjs?v=e593d57080';
+import{dailyChoice,randomChoice}from'./discovery.mjs?v=e593d57080';
 let pageController;
 export function mountPage(){
  pageController?.abort();const lifecycle=pageController=new AbortController(),signal=lifecycle.signal;
@@ -23,7 +23,7 @@ if($('#discovery'))startDiscovery().catch(console.error);
 // Only one user-initiated extract plays at a time; no autoplay or audio prefetch.
 onDocument('play',ev=>{if(ev.target.tagName==='AUDIO')$$('audio').forEach(a=>{if(a!==ev.target)a.pause()})},true);
 async function startDiscovery(){
- const response=await fetch(path('/assets/discovery-index.json?v=e908546a77'));if(!response.ok)return;
+ const response=await fetch(path('/assets/discovery-index.json?v=e593d57080'));if(!response.ok)return;
  const pool=await response.json();if(signal.aborted||!pool.length)return;let current='';
  function show(choice,isDaily,announce=false){let{album:a,work:w}=choice,target=path('/recordings/'+a.slug+'/');current=a.id+':'+w.id;
   $('#discovery-card').querySelectorAll('audio').forEach(a=>a.pause());$('#discovery-card').innerHTML=`<a class="discovery-cover" href="${target}"><span class="cover"><img src="${path('/assets/covers/'+a.cover+'-480.webp')}" width="480" height="480" loading="lazy" alt="${e(a.title)} — album cover"></span></a><div><p class="eyebrow">${e(w.composer)}</p><h3>${e(w.title)}</h3>${w.identifier.length?`<p class="small muted">${e(w.identifier.join(' · '))}</p>`:''}<p class="small">${e(w.performers)}</p><p class="small muted">${w.personnelScope==='work'?'Performers on this work':'Artists credited on this album'}</p><p class="discovery-album">From <a href="${target}">${e(a.title)}</a><br><span class="small muted">${e([a.year,a.label].filter(Boolean).join(' · '))}</span></p>${w.sample?`<div class="audio-extract"><p class="small muted">MP3 samples · one minute · not full recording quality</p>${(w.sample.clips||[w.sample]).map(c=>`<button type="button" class="sample-button" data-play-sample="${e(c.id)}" aria-pressed="false">▶ <span>${e(c.title)}</span></button>`).join('')}</div>`:''}</div>`;
@@ -33,7 +33,7 @@ async function startDiscovery(){
  $('#choose-work').addEventListener('click',()=>show(randomChoice(pool,current),false,true));$('#daily-work').addEventListener('click',()=>{show(dailyChoice(pool),true,true);$('#choose-work').focus({preventScroll:true})});
 }
 async function startCatalogue(){
- const response=await fetch(path('/assets/catalogue-index.json?v=e908546a77'));if(!response.ok)throw Error('Catalogue unavailable');const data=(await response.json()).map(prepare);if(signal.aborted)return;
+ const response=await fetch(path('/assets/catalogue-index.json?v=e593d57080'));if(!response.ok)throw Error('Catalogue unavailable');const data=(await response.json()).map(prepare);if(signal.aborted)return;
  let state=fromURL(location.href),list=[],opened=null,returnUrl='',lastFocus='',openRequest=0;
  const syncPalettes=Object.fromEntries(['artist','composer','label'].map(key=>[key,artistPalette(root.querySelector(`[data-palette="${key}"]`),name=>{state.filters[key]=[name];state.q='';resetPage();commit()},signal)]));
  const q=$('#catalogue-query'),suggestions=$('#suggestions'),grid=$('#collection'),panel=$('#detail-panel'),labels={composer:'Composer',artist:'Artist / ensemble',work:'Repertoire',instrument:'Instrument',label:'Label',role:'My contribution'};

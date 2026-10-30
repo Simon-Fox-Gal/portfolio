@@ -1,4 +1,4 @@
-import{normalise}from'./search.mjs?v=e908546a77';
+import{normalise}from'./search.mjs?v=e593d57080';
 
 export function artistPalette(element,onChoose,signal){
  if(!element)return ()=>{};
