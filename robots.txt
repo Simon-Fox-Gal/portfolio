@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://simon-fox-gal.github.io/portfolio/sitemap.xml
