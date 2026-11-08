@@ -1,9 +1,9 @@
-import{base,pagePath,assetPath,t,german}from'./locale.mjs?v=74a6d91565';
+import{base,pagePath,assetPath,t,german}from'./locale.mjs?v=8d013d22df';
 import {createSessionDeck} from './session-discovery.mjs';
 let mounted=false,enabled=false,mountPage,controller,current=null,queue=[],items=[],loading,request=0,albumDeck;
 const sessionKey='listening-album-deck-v1';
 function saveDeck(){try{sessionStorage.setItem(sessionKey,JSON.stringify(albumDeck.snapshot()))}catch{}}
-let panel,audio,title,record,art,status,opener;
+let panel,audio,title,record,art,status,opener,standalone=false;
 export function initPlayer(mount){
  if(mounted)return;mounted=true;mountPage=mount;
  panel=document.createElement('section');panel.id='sample-player';panel.hidden=true;panel.setAttribute('aria-label',t('Recording sample player'));
@@ -13,10 +13,10 @@ export function initPlayer(mount){
  panel.querySelector('[data-player-next]').addEventListener('click',next);
  panel.querySelector('[data-player-random]').addEventListener('click',chooseRandom);
  panel.querySelector('[data-player-close]').addEventListener('click',()=>{audio.pause();audio.removeAttribute('src');audio.load();panel.hidden=true;document.body.classList.remove('has-player');document.documentElement.style.setProperty('--player-height','0px');if(opener?.isConnected)opener.focus({preventScroll:true})});
- audio.addEventListener('ended',()=>next(true));audio.addEventListener('error',()=>{status.textContent=t('This sample could not be loaded. Try Play again, or choose another sample.')});
+ audio.addEventListener('ended',()=>{if(!standalone)next(true)});audio.addEventListener('error',()=>{status.textContent=t('This sample could not be loaded. Try Play again, or choose another sample.')});
  audio.addEventListener('playing',()=>{status.textContent=''});
  document.addEventListener('click',async ev=>{
-  const trigger=ev.target.closest('[data-play-sample],[data-random-sample]');if(trigger){ev.preventDefault();opener=trigger;try{await load();if(trigger.hasAttribute('data-random-sample'))chooseRandom();else select(trigger.dataset.playSample)}catch{trigger.textContent=t('Samples unavailable — try again')}return}
+  const trigger=ev.target.closest('[data-play-sample],[data-random-sample]');if(trigger){ev.preventDefault();opener=trigger;try{await load();if(trigger.hasAttribute('data-random-sample'))chooseRandom();else select(trigger.dataset.playSample,false,trigger.hasAttribute('data-play-here'))}catch{trigger.textContent=t('Samples unavailable — try again')}return}
   const a=ev.target.closest('a[href]');if(!enabled||ev.defaultPrevented||!a||ev.button!==0||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey||a.target||a.hreflang||a.hasAttribute('download'))return;
   const url=new URL(a.href);if(url.origin!==location.origin||!url.pathname.startsWith(base+'/')||!url.pathname.endsWith('/'))return;
   if(url.pathname===location.pathname&&url.search===location.search&&url.hash)return;
@@ -26,16 +26,16 @@ export function initPlayer(mount){
  addEventListener('popstate',ev=>{if(!enabled)return;if(document.querySelector('#catalogue')&&ev.state?.catalogue)return;if(document.querySelector('#record-room')&&location.pathname===pagePath('/recordings/archive/'))return;ev.stopImmediatePropagation();navigate(location.href,false)},true);
  load().catch(()=>{});
 }
-async function load(){if(items.length)return;loading??=fetch(assetPath('/assets/samples-index.json?v=74a6d91565')).then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{items=data;queue=items.map(x=>x.id);let saved;try{saved=JSON.parse(sessionStorage.getItem(sessionKey))}catch{}albumDeck=createSessionDeck(items.map(x=>x.albumId),saved);saveDeck()}).catch(e=>{loading=null;throw e});await loading}
+async function load(){if(items.length)return;loading??=fetch(assetPath('/assets/samples-index.json?v=8d013d22df')).then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{items=data;queue=items.map(x=>x.id);let saved;try{saved=JSON.parse(sessionStorage.getItem(sessionKey))}catch{}albumDeck=createSessionDeck(items.map(x=>x.albumId),saved);saveDeck()}).catch(e=>{loading=null;throw e});await loading}
 function markCurrent(){document.querySelectorAll('[data-play-sample]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.playSample===current?.id)))}
-async function select(id,automatic=false){
+async function select(id,automatic=false,playHere=false){
  const item=items.find(x=>x.id===id);if(!item)return;
  albumDeck.mark(item.albumId);saveDeck();
  const albumChanged=current?.albumId!==item.albumId;
- enabled=true;current=item;panel.hidden=false;document.body.classList.add('has-player');title.textContent=item.title;record.textContent=item.albumTitle+' →';record.href=pagePath('/recordings/'+item.slug+'/#'+item.workId);art.src=assetPath('/assets/covers/'+item.cover+'-240.webp');audio.src=item.src;status.textContent='';markCurrent();
+ standalone=playHere;enabled=true;current=item;panel.hidden=false;document.body.classList.add('has-player');title.textContent=item.title;record.textContent=item.albumTitle+' →';record.href=pagePath('/recordings/'+item.slug+'/#'+item.workId);art.src=assetPath('/assets/covers/'+item.cover+'-240.webp');audio.src=item.src;status.textContent='';markCurrent();
  // Start within the listening gesture; page loading must never replace the audio element.
  const playing=audio.play().catch(()=>{if(current?.id===id)status.textContent=t('Press Play to listen to this sample.')});
- if(!automatic||albumChanged){
+ if(!playHere&&(!automatic||albumChanged)){
   const target=new URL(record.href);
   if(location.pathname!==target.pathname)await navigate(target.href);
   else{controller?.abort();request++;target.search=location.search;history.replaceState(history.state,'',target.href);document.getElementById(item.workId)?.scrollIntoView()}
