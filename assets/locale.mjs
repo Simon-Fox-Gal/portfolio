@@ -1,4 +1,4 @@
-import{labels,terms}from'./locale-data.mjs?v=f31dbed07c';
+import{labels,terms}from'./locale-data.mjs?v=bead4bcd0f';
 
 export const german=document.documentElement.lang==='de';
 export const base=document.body.dataset.base||'';
