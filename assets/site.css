@@ -64,3 +64,17 @@ html:not(.js) [data-play-sample],html:not(.js) [data-random-sample]{display:none
 .page-links,.page-ending{display:flex;flex-wrap:wrap;gap:12px 28px}
 .page-ending{border-top:1px solid var(--line);margin-top:2rem;padding-top:1rem}
 .margin-note .session-photo{margin:1.5rem 0 0}
+.language-switch{order:3;display:flex;align-items:center;gap:.7rem;white-space:nowrap;font-size:.74rem}
+.language-switch a{color:var(--muted);text-underline-offset:4px;padding:12px 0}
+.language-switch a[aria-current=page]{color:var(--ink);font-weight:700;text-decoration:none}
+.language-switch abbr{display:none;text-decoration:none}
+@media(max-width:900px) and (min-width:768px){.language-switch{order:0}.site-header .site-nav{order:4}}
+@media(max-width:767px){
+ .site-header{display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:.75rem}
+ .site-header .brand{max-width:none}
+ .site-header .menu-button{padding-left:0;align-self:center}
+ .language-switch{order:0;gap:.5rem}
+ .language-switch span{display:none}
+ .language-switch abbr{display:inline}
+ .site-header .site-nav{grid-column:1/-1}
+}

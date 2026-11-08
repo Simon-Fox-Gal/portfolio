@@ -1,4 +1,5 @@
-import{normalise}from'./search.mjs?v=6dc0bcefdc';
+import{t}from'./locale.mjs?v=0250606ba5';
+import{normalise}from'./search.mjs?v=0250606ba5';
 
 export function artistPalette(element,onChoose,signal){
  if(!element)return ()=>{};
@@ -8,7 +9,7 @@ export function artistPalette(element,onChoose,signal){
  function close(returnFocus=false){clearTimeout(timer);dismissed=true;hoverOpened=false;const inside=element.contains(document.activeElement);element.open=false;if(returnFocus||inside)summary.focus({preventScroll:true})}
  function open(){clearTimeout(timer);if(!dismissed){document.querySelectorAll('.artist-palette[open]').forEach(other=>{if(other!==element)other.open=false});element.open=true}}
  const initials=[...new Set(links.map(initial))].sort();
- for(const value of ['All',...initials]){const b=document.createElement('button');b.type='button';b.textContent=value;b.setAttribute('aria-pressed',String(value==='All'));b.addEventListener('click',()=>{letters.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));for(const a of links)a.closest('li').hidden=value!=='All'&&initial(a)!==value;element.querySelector('.artist-palette-list').scrollTop=0});letters.append(b)}
+ for(const value of ['All',...initials]){const b=document.createElement('button');b.type='button';b.textContent=value==='All'?t('All'):value;b.setAttribute('aria-pressed',String(value==='All'));b.addEventListener('click',()=>{letters.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));for(const a of links)a.closest('li').hidden=value!=='All'&&initial(a)!==value;element.querySelector('.artist-palette-list').scrollTop=0});letters.append(b)}
  letters.hidden=false;
  element.addEventListener('pointerenter',ev=>{if(ev.pointerType==='mouse'&&matchMedia('(hover:hover)').matches){dismissed=false;keyboard=false;hoverOpened=!element.open;open()}});
  element.addEventListener('pointerleave',ev=>{if(ev.pointerType==='mouse'&&!keyboard){timer=setTimeout(()=>close(),180)}});
