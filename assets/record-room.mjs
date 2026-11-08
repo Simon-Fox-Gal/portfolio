@@ -1,9 +1,9 @@
-import{prepare,matches as albumMatches}from'./search.mjs?v=6530507bd9';
-import{artistPalette}from'./artist-palette.mjs?v=6530507bd9';
+import{prepare,matches as albumMatches}from'./search.mjs?v=5fed4fd967';
+import{artistPalette}from'./artist-palette.mjs?v=5fed4fd967';
 
 export async function startRecordRoom(signal){
  const room=document.querySelector('#record-room'),base=document.body.dataset.base||'';
- const response=await fetch(base+'/assets/catalogue-index.json?v=6530507bd9');if(!response.ok)return;
+ const response=await fetch(base+'/assets/catalogue-index.json?v=5fed4fd967');if(!response.ok)return;
  const data=(await response.json()).map(prepare);if(signal?.aborted)return;const byId=new Map(data.map(a=>[a.id,a]));
  const sleeves=[...room.querySelectorAll('[data-record]')],query=room.querySelector('#room-query'),status=room.querySelector('#room-status');
  const next=room.querySelector('#room-next'),clear=room.querySelector('#room-clear');

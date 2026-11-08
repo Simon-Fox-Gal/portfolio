@@ -61,3 +61,6 @@ html:not(.js) [data-play-sample],html:not(.js) [data-random-sample]{display:none
 
 /* A small factual caption separates the session photograph from the essay. */
 .session-photo{margin-bottom:2.5rem}.session-photo figcaption{margin-top:9px;font:.72rem/1.55 var(--sans);color:var(--muted)}
+.page-links,.page-ending{display:flex;flex-wrap:wrap;gap:12px 28px}
+.page-ending{border-top:1px solid var(--line);margin-top:2rem;padding-top:1rem}
+.margin-note .session-photo{margin:1.5rem 0 0}
