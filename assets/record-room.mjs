@@ -1,10 +1,10 @@
-import{pagePath,assetPath,t,german,catalogueCredit,catalogueTerms,recordingCount}from'./locale.mjs?v=0250606ba5';
-import{prepare,matches as albumMatches}from'./search.mjs?v=0250606ba5';
-import{artistPalette}from'./artist-palette.mjs?v=0250606ba5';
+import{pagePath,assetPath,t,german,catalogueCredit,catalogueTerms,recordingCount}from'./locale.mjs?v=9eab561767';
+import{prepare,matches as albumMatches}from'./search.mjs?v=9eab561767';
+import{artistPalette}from'./artist-palette.mjs?v=9eab561767';
 
 export async function startRecordRoom(signal){
  const room=document.querySelector('#record-room');
- const response=await fetch(assetPath('/assets/catalogue-index.json?v=0250606ba5'));if(!response.ok)return;
+ const response=await fetch(assetPath('/assets/catalogue-index.json?v=9eab561767'));if(!response.ok)return;
  const data=(await response.json()).map(album=>prepare(album,catalogueTerms(album)));if(signal?.aborted)return;const byId=new Map(data.map(a=>[a.id,a]));
  const sleeves=[...room.querySelectorAll('[data-record]')],query=room.querySelector('#room-query'),status=room.querySelector('#room-status');
  const next=room.querySelector('#room-next'),clear=room.querySelector('#room-clear');
