@@ -1,5 +1,5 @@
-import{t}from'./locale.mjs?v=ef4f1491c8';
-import{normalise}from'./search.mjs?v=ef4f1491c8';
+import{t}from'./locale.mjs?v=745f8cc7cf';
+import{normalise}from'./search.mjs?v=745f8cc7cf';
 
 export function artistPalette(element,onChoose,signal){
  if(!element)return ()=>{};
