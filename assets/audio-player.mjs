@@ -1,4 +1,4 @@
-import{base,pagePath,assetPath,t,german}from'./locale.mjs?v=d688c6a43b';
+import{base,pagePath,assetPath,t,german}from'./locale.mjs?v=9858a00565';
 import {createSessionDeck} from './session-discovery.mjs';
 let mounted=false,enabled=false,mountPage,controller,current=null,queue=[],items=[],loading,request=0,albumDeck;
 const sessionKey='listening-album-deck-v1';
@@ -26,7 +26,7 @@ export function initPlayer(mount){
  addEventListener('popstate',ev=>{if(!enabled)return;if(document.querySelector('#catalogue')&&ev.state?.catalogue)return;if(document.querySelector('#record-room')&&location.pathname===pagePath('/recordings/archive/'))return;ev.stopImmediatePropagation();navigate(location.href,false)},true);
  load().catch(()=>{});
 }
-async function load(){if(items.length)return;loading??=fetch(assetPath('/assets/samples-index.json?v=d688c6a43b')).then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{items=data;queue=items.map(x=>x.id);let saved;try{saved=JSON.parse(sessionStorage.getItem(sessionKey))}catch{}albumDeck=createSessionDeck(items.map(x=>x.albumId),saved);saveDeck()}).catch(e=>{loading=null;throw e});await loading}
+async function load(){if(items.length)return;loading??=fetch(assetPath('/assets/samples-index.json?v=9858a00565')).then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{items=data;queue=items.map(x=>x.id);let saved;try{saved=JSON.parse(sessionStorage.getItem(sessionKey))}catch{}albumDeck=createSessionDeck(items.map(x=>x.albumId),saved);saveDeck()}).catch(e=>{loading=null;throw e});await loading}
 function markCurrent(){document.querySelectorAll('[data-play-sample]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.playSample===current?.id)))}
 async function select(id,automatic=false,playHere=false){
  const item=items.find(x=>x.id===id);if(!item)return;
