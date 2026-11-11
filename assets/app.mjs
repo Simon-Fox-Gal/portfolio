@@ -1,10 +1,10 @@
-import{initPhotoGallery}from'./photo-gallery.mjs?v=9858a00565';
-import{pagePath,assetPath,t,german,catalogueTerm,catalogueCredit,catalogueTerms,recordingCount,switchLanguage}from'./locale.mjs?v=9858a00565';
-import{initPlayer,navigate}from'./audio-player.mjs?v=9858a00565';
-import{startRecordRoom}from'./record-room.mjs?v=9858a00565';
-import{artistPalette}from'./artist-palette.mjs?v=9858a00565';
-import{categories,normalise,equivalent,prepare,values,matches,results,fromURL,toParams,distance,queryMatch}from'./search.mjs?v=9858a00565';
-import{dailyChoice,randomChoice}from'./discovery.mjs?v=9858a00565';
+import{initPhotoGallery}from'./photo-gallery.mjs?v=838d8ba17f';
+import{pagePath,assetPath,t,german,catalogueTerm,catalogueCredit,catalogueTerms,recordingCount,switchLanguage}from'./locale.mjs?v=838d8ba17f';
+import{initPlayer,navigate}from'./audio-player.mjs?v=838d8ba17f';
+import{startRecordRoom}from'./record-room.mjs?v=838d8ba17f';
+import{artistPalette}from'./artist-palette.mjs?v=838d8ba17f';
+import{categories,normalise,equivalent,prepare,values,matches,results,fromURL,toParams,distance,queryMatch}from'./search.mjs?v=838d8ba17f';
+import{dailyChoice,randomChoice}from'./discovery.mjs?v=838d8ba17f';
 let pageController;
 export function mountPage(){
  pageController?.abort();const lifecycle=pageController=new AbortController(),signal=lifecycle.signal;
@@ -23,13 +23,23 @@ onDocument('keydown',ev=>{if(ev.key==='Escape'&&nav.classList.contains('expanded
 const back=$('[data-return]');if(back){let from=new URL(location.href).searchParams.get('from');if(from&&from.startsWith(path('/recordings/'))&&!from.startsWith('//')){back.href=from;const room=from.startsWith(path('/recordings/archive/'));back.textContent=room?t('← Back to the record room'):t('← Back to your results');const parent=$('[data-crumb-parent]');if(parent){parent.href=from;parent.textContent=room?t('Record room'):t('Catalogue')}}}
 const dir=$('.directory-search');dir?.addEventListener('input',()=>{$$('.directory-grid li').forEach(li=>li.hidden=!normalise(li.textContent).includes(normalise(dir.value)));$$('.directory-section').forEach(s=>s.hidden=![...s.querySelectorAll('li')].some(x=>!x.hidden))});
 const form=$('#contact-form');if(form){form.addEventListener('submit',async ev=>{ev.preventDefault();if(!form.reportValidity())return;const status=$('#form-status'),button=form.querySelector('button[type=submit]');if(!form.dataset.endpoint){status.textContent=t('Delivery is awaiting activation for this private review. Your message has not been sent.');status.focus();return}button.disabled=true;status.textContent=t('Sending your message…');try{let data=new FormData(form);let response=await fetch(form.dataset.endpoint,{method:'POST',body:data,headers:{Accept:'application/json'}});let result=await response.json();if(!response.ok||result.success===false||result.success==='false')throw Error('Delivery unavailable');status.textContent=t('Thank you. Your message has been sent.');form.reset()}catch{status.textContent=t('Your message could not be sent. It is still here; please try again shortly.')}finally{button.disabled=false;status.focus()}})}
+const closeFeature=$('[data-close-feature]');
+if(closeFeature){
+ closeFeature.hidden=false;
+ closeFeature.addEventListener('click',()=>{
+  const feature=closeFeature.closest('details');
+  feature.open=false;
+  feature.querySelector('summary').focus({preventScroll:true});
+  feature.scrollIntoView({block:'nearest',behavior:'instant'});
+ },{signal});
+}
 const root=$('#catalogue');if(root)startCatalogue().catch(err=>{console.error(err);$('#enhancement-status').textContent=t('Interactive browsing is unavailable. All featured recordings remain available in the catalogue below.')});
 if($('#record-room'))startRecordRoom(signal).catch(console.error);
 if($('#discovery'))startDiscovery().catch(console.error);
 // Only one user-initiated extract plays at a time; no autoplay or audio prefetch.
 onDocument('play',ev=>{if(ev.target.tagName==='AUDIO')$$('audio').forEach(a=>{if(a!==ev.target)a.pause()})},true);
 async function startDiscovery(){
- const response=await fetch(assetPath('/assets/discovery-index.json?v=9858a00565'));if(!response.ok)return;
+ const response=await fetch(assetPath('/assets/discovery-index.json?v=838d8ba17f'));if(!response.ok)return;
  const pool=await response.json();if(signal.aborted||!pool.length)return;let current='';
  function show(choice,isDaily,announce=false){let{album:a,work:w}=choice,target=path('/recordings/'+a.slug+'/');current=a.id+':'+w.id;
   $('#discovery-card').querySelectorAll('audio').forEach(a=>a.pause());$('#discovery-card').innerHTML=`<a class="discovery-cover" href="${target}"><span class="cover"><img src="${assetPath('/assets/covers/'+a.cover+'-480.webp')}" width="480" height="480" loading="lazy" alt="${e(a.title)}${german?" — Albumcover":" — album cover"}"></span></a><div><p class="eyebrow">${e(w.composer)}</p><h3>${e(w.title)}</h3>${w.identifier.length?`<p class="small muted">${e(w.identifier.join(' · '))}</p>`:''}<p class="small">${e(w.performers)}</p><p class="small muted">${w.personnelScope==='work'?t('Performers on this work'):t('Artists credited on this album')}</p><p class="discovery-album">${t('From')} <a href="${target}">${e(a.title)}</a><br><span class="small muted">${e([a.year,a.label].filter(Boolean).join(' · '))}</span></p>${w.sample?`<div class="audio-extract"><p class="small muted">${t('MP3 samples · one minute · not full recording quality')}</p>${(w.sample.clips||[w.sample]).map(c=>`<button type="button" class="sample-button" data-play-sample="${e(c.id)}" aria-pressed="false">▶ <span>${e(c.title)}</span></button>`).join('')}</div>`:''}</div>`;
@@ -39,7 +49,7 @@ async function startDiscovery(){
  $('#choose-work').addEventListener('click',()=>show(randomChoice(pool,current),false,true));$('#daily-work').addEventListener('click',()=>{show(dailyChoice(pool),true,true);$('#choose-work').focus({preventScroll:true})});
 }
 async function startCatalogue(){
- const response=await fetch(assetPath('/assets/catalogue-index.json?v=9858a00565'));if(!response.ok)throw Error('Catalogue unavailable');const data=(await response.json()).map(album=>prepare(album,catalogueTerms(album)));if(signal.aborted)return;
+ const response=await fetch(assetPath('/assets/catalogue-index.json?v=838d8ba17f'));if(!response.ok)throw Error('Catalogue unavailable');const data=(await response.json()).map(album=>prepare(album,catalogueTerms(album)));if(signal.aborted)return;
  let state=fromURL(location.href),list=[],opened=null,returnUrl='',lastFocus='',openRequest=0,returnScroll=0;
  const syncPalettes=Object.fromEntries(['artist','composer','label'].map(key=>[key,artistPalette(root.querySelector(`[data-palette="${key}"]`),name=>{state.filters[key]=[name];state.q='';resetPage();commit()},signal)]));
  const q=$('#catalogue-query'),suggestions=$('#suggestions'),grid=$('#collection'),panel=$('#detail-panel'),labels={composer:t('Composer'),artist:t('Artist / ensemble'),work:t('Repertoire'),instrument:t('Instrument'),label:t('Label'),role:t('My contribution')};
